@@ -15,6 +15,10 @@
 //NEEDED To setup testing environment and run tests
 import { TestSuite } from './TestSuite.js';
 import { getMarks } from "../js/debug1_solution.js";
+import { Defaults } from "./Defaults.js";
+
+
+import { TestSuitePresentationLayer } from "./TestSuitePresentationLayer.js";
 
 
 //Demostration only
@@ -22,8 +26,18 @@ import { passEventHandler } from '../js/debug1_solution.js';
 
 
 //TESTSUITES for TestSuite.
-var testSuiteNames = ["TestSuitePARTIAL","TestBed1"];
-var testSuite = createTestSuite(testSuiteNames[0],(testSuiteNames[0] + "__" + testSuiteNames[1]));
+var testSuiteNames;
+var defaults;
+var testSuitePresentationLayer;
+var testSuite;
+
+function createPresentationLayer(){
+  testSuiteNames = ["TestSuitePARTIAL","TestBed1"];
+  defaults = new Defaults();
+  testSuitePresentationLayer = new TestSuitePresentationLayer(defaults);
+}
+
+//var testSuite = createTestSuite(testSuiteNames[0],(testSuiteNames[0] + "__" + testSuiteNames[1]));
 
 
 //!!REQUIRED!!
@@ -38,10 +52,11 @@ function createTestSuite(testSuiteName, testBedName){
 //!!REQUIRED!!
 //IMPORTED by main JS file, this is how we enable and disable Tests.
 export function enableTestEnvironment(enabled = true){
-      if (window.sessionStorage.getItem(testSuite.defaultSessionStorageItemName) == null){
+      if (window.sessionStorage.getItem(defaults.defaultSessionStorageItemName) == null){
         window.testSuiteTools.enabled = enabled;
+        createPresentationLayer();
       }else{
-        window.testSuiteTools.enabled = JSON.parse(window.sessionStorage.getItem(testSuite.defaultSessionStorageItemName));
+        window.testSuiteTools.enabled = JSON.parse(window.sessionStorage.getItem(defaults.defaultSessionStorageItemName));
       }
 }
 
