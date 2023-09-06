@@ -3,14 +3,33 @@ export class PresentationLayerElementAttribute{
         this.Element = element;
         this.Property = attribute;
         this.Value = value;
+        this.EventType = null;
+        this.EventHandler = null;
     }
 
-    applyAttributeChange(){
+    applyAttributeChange(eventListener = false){
         for (var property in this.Element){
             if (Object.prototype.hasOwnProperty.call(this.Element, this.Property)){
-                property = this.Value;
+                if (eventListener == false){
+                    property = this.Value;
+                }else{
+                    if (this.EventHandler != null && this.EventType != null){
+                        property.addEventListener(this.EventType, this.EventHandler);
+                    }
+                    
+                }
+                
             }
         }
         
+    }
+
+    createEventListener(){
+        this.applyAttributeChange(true);
+    }
+
+    updateEventListener(eventType,callbackFunction){
+        this.EventType = eventType;
+        this.EventHandler = callbackFunction;
     }
 }
