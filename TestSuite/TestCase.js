@@ -12,6 +12,7 @@ export class TestCase{
         this.TestData = testData;
         this.TestResult = null;
         this.ExpectedResult = expectedResult;
+        this.ErrorTypeFound = "[No Error]";
         this.ExpectedErrorType = expectedError;
         this.FunctionToTest = functionToTest;
         this.Date = new Date();
@@ -54,6 +55,7 @@ export class TestCase{
         //ERROR CHECKING SECTION - compares to ExpectedErrorType provided by TestCase
         }catch(e){
             var errorString = ` [${this.TestData.constructor.name}] ` + `[${this.TestData[0].constructor.name}]` + "\nData Set: " + this.TestData.toString() + `\nError Found: [${e.name}]` + `\nExpected Error: [${this.ExpectedErrorType.name}] `;
+            this.ErrorTypeFound = `[${e.constructor.name}]`;
             if (e instanceof this.ExpectedErrorType){
                 this.TestResultMessage = testPass + errorString;
                 this.Passed = true;
@@ -61,6 +63,7 @@ export class TestCase{
             }else{
                 this.TestResultMessage = testFail + errorString;
                 this.Passed = false;
+                
                 return errorString;
             }
         }

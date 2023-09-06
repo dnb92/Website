@@ -190,12 +190,21 @@ export class TestSuitePresentationLayer{
             if (testScenario.Passed == true){
                 textField.innerHTML = "TEST SCENARIO: " + testScenario.Name + " PASSED";
                 textField.style.backgroundColor = "green";
+                this.mainWindowOpenCloseButtonElement.style.backgroundColor = "green";
+                this.mainWindowOpenCloseButtonElement.innerHTML= "[ALL PASS]";
+                this.mainWindowOpenCloseButtonElement.style.color = "white";
             }else if(testScenario.Passed == false){
                 textField.innerHTML = "TEST SCENARIO: " + testScenario.Name + " FAILED ";
                 textField.style.backgroundColor = "red";
+                this.mainWindowOpenCloseButtonElement.style.backgroundColor = "red";
+                this.mainWindowOpenCloseButtonElement.innerHTML= "[ALL FAIL]";
+                this.mainWindowOpenCloseButtonElement.style.color = "white";
             }else{
                 textField.innerHTML = "TEST SCENARIO: " + testScenario.Name + " PARTIAL ";
                 textField.style.backgroundColor = "orange";
+                this.mainWindowOpenCloseButtonElement.style.backgroundColor = "orange";
+                this.mainWindowOpenCloseButtonElement.innerHTML= "[PARTIAL FAIL]";
+                this.mainWindowOpenCloseButtonElement.style.color = "white";
             }
 
             var testResultsCon = document.createElement("div");
@@ -306,8 +315,9 @@ export class TestSuitePresentationLayer{
                     textField1.style.whiteSpace = "wrap";
                     textField1.style.textAlign = "left";
                     textField1.style.position = "relative";
-                    textField1.style.pointerEvents = "none";
+                    textField1.style.pointerEvents = "auto";
                     textField1.style.marginBottom = "50px";
+                    
                     textField1.style.borderRadius = "20px";
                     textField1.style.borderWidth = "1px";
                     textField1.style.borderStyle = "dashed";
@@ -317,6 +327,7 @@ export class TestSuitePresentationLayer{
         
             
             var textField2 = document.createElement('div');
+            textField2.style.pointerEvents = "auto";
             textField2.style.textAlign = "center";
             textField1.appendChild(textField2);
     
@@ -360,7 +371,7 @@ export class TestSuitePresentationLayer{
             saveButton.style.backgroundColor = "orange";
             saveButton.innerHTML = "Save To File";
             saveButton.style.color = "black";
-            var func = function (){testScenario.saveToFile(file, fileName)};
+            var func = function (){alert("ALERT: TEST RESULTS WILL BE SAVED TO DOWNLOAD FOLDER.");testScenario.saveToFile(file, fileName)};
             saveButton.onclick = func.bind(this.Data.TestBeds.TestScenarios[0]);
             
             textField2.appendChild(saveButton);
@@ -370,6 +381,7 @@ export class TestSuitePresentationLayer{
     
             //RESET LINK
             var resetButton = document.createElement("button");
+            resetButton.id = "refreshPageButton";
             resetButton.style.padding = "10px";
             resetButton.style.fontFamily = "Helvetica";
             resetButton.style.fontWeight = "bold";
@@ -380,7 +392,7 @@ export class TestSuitePresentationLayer{
             resetButton.style.backgroundColor = "orange";
             resetButton.innerHTML = "Refresh Page";
             resetButton.style.color = "black";
-            resetButton.href = "debug1_corrected.html"
+            resetButton.onclick = function (){window.location.reload();};
             
             textField2.appendChild(resetButton);
     
@@ -397,6 +409,7 @@ export class TestSuitePresentationLayer{
 
             window.sessionStorage.setItem("testBedsRun", true);
             
+            
          
 
     }
@@ -406,7 +419,7 @@ export class TestSuitePresentationLayer{
             //testBedElement.style.pointerEvents = "none";
 
             //Create Test Case Info:
-            var propertyNames = ["TestName","TestType","TestData","TestResult","ExpectedResult","FunctionToTest","ExpectedErrorType","Time"];
+            var propertyNames = ["TestName","TestType","TestData","TestResult","ExpectedResult","FunctionToTest","ErrorTypeFound","ExpectedErrorType","Time"];
             var testCaseElement = document.createElement('div');
             testCaseElement.style.display = "inline-block";
             testCaseElement.style.position = "relative";
