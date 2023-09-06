@@ -91,8 +91,10 @@ export class TestScenario {
     AllTestCasesPassed() {
         if (this.TestCases.every(function(e){ return e.Passed == true})){
             this.Passed = true;
-        }else{
+        }else if (this.TestCases.every(function(e){ return e.Passed == false})){
             this.Passed = false;
+        }else{
+            this.Passed = "partial";
         }
 
     }

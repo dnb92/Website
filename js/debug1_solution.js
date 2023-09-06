@@ -1,6 +1,7 @@
 //NEEDED TO RUN TESTING algorith will work without this import.
-import { enableTestEnvironment as TestPass } from '../TestSuite/TestKit_Pass.js';
+//import { enableTestEnvironment as TestPass } from '../TestSuite/TestKit_Pass.js';
 //import { enableTestEnvironment as TestFail } from '../TestSuite/TestKit_Fail.js';
+import { enableTestEnvironment as TestPartialFail } from '../TestSuite/TestKit_Partial.js';
 
 
 //Attach Event Listener to link via inline function.
@@ -150,8 +151,9 @@ export function passEventHandler(){
 
 //NEED THIS FOR TESTING TO WORK - pass "false" as argument to disable test environment.
 
+//TestPass(true);
 //TestFail(true);
-TestPass(true);
+TestPartialFail(true);
 
 
 

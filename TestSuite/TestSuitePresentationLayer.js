@@ -144,12 +144,14 @@ export class TestSuitePresentationLayer{
                             textField.style.color = "white";
                             textField.style.fontWeight = "bold";
                             textField.style.fontSize = "40px"
-                            textField.style.width = "95%";
+                            textField.style.width = "100%";
                             textField.style.borderRadius = "10px";
                             textField.style.padding = "20px";
                             textField.style.position = "relative";
                             textField.style.marginBottom = "10px";
-                            textField.innerHTML = "TEST SCENARIO: " + testScenario.Name;
+                        
+                            
+                            
                             
                             this.scrollWindowElement.appendChild(textField);
                         this.BuildTestScenarios(textField,this.scrollWindowElement,testScenario);
@@ -182,18 +184,18 @@ export class TestSuitePresentationLayer{
             
             testResults = testScenario.GenerateTestResults().replace(/[,]+/g," ");
 
-            if (testScenario.Passed == false){
-                textField.style.backgroundColor = "red";
-            }else{
-                textField.style.backgroundColor = "Black";
-            }
 
             testScenario.cloneAndAddListener();
 
-            if (testScenario.Passed == false){
+            if (testScenario.Passed == true){
+                textField.innerHTML = "TEST SCENARIO: " + testScenario.Name + " PASSED";
+                textField.style.backgroundColor = "green";
+            }else if(testScenario.Passed == false){
+                textField.innerHTML = "TEST SCENARIO: " + testScenario.Name + " FAILED ";
                 textField.style.backgroundColor = "red";
             }else{
-                textField.style.backgroundColor = "Black";
+                textField.innerHTML = "TEST SCENARIO: " + testScenario.Name + " PARTIAL ";
+                textField.style.backgroundColor = "orange";
             }
 
             var testResultsCon = document.createElement("div");
@@ -205,6 +207,7 @@ export class TestSuitePresentationLayer{
             testResultsContainer.style.width = "90%";
             //testResultsContainer.style.overflowY = "scroll";
             testResultsContainer.style.padding = "20px";
+            testResultsContainer.style.pointerEvents = "none";
             
             testBedElement.style.textAlign = "center";
             testBedElement.style.fontFamily = "Helvetica";
@@ -217,8 +220,11 @@ export class TestSuitePresentationLayer{
             testResultPanel.style.overflowY = "hidden";
             testResultPanel.style.whiteSpace = "nowrap";
             testResultPanel.style.display = "inline-block";
-            testResultPanel.style.width = "90%";
-            testResultPanel.style.height = "500px";
+            testResultPanel.style.width = "95%";
+            testResultPanel.style.borderStyle = "dashed";
+            testResultPanel.style.borderWidth = "1px";
+            testResultPanel.style.borderColor = "black";
+            testResultPanel.style.height = "content";
             testResultPanel.style.padding = "200px";
             testResultPanel.style.borderRadius = "50px";
             testResultPanel.style.backgroundColor = "none";
@@ -228,33 +234,34 @@ export class TestSuitePresentationLayer{
             testResultPanel.style.paddingTop = "50px";
             testResultPanel.style.paddingBottom = "50px";
             testResultPanel.style.margin = "20px";
+            testResultPanel.style.pointerEvents = "auto";
             //testResultPanel.style.boxShadow = "10px 10px lightblue";
             testResultsContainer.appendChild(testResultPanel);
         
             var textField = document.createElement('p');
             textField.style.margin = "10px";
-                            textField.style.fontFamily = "Helvetica";
-            
+            textField.style.fontFamily = "Helvetica";
             textField.style.color = "black";
             textField.style.fontWeight = "bold";
             textField.style.fontSize = "20px"
-                                textField.style.width = "95%";
-                                textField.style.borderRadius = "10px";
-                                textField.style.padding = "20px";
-                                textField.style.paddingBottom = "630px";
-                                textField.style.backgroundColor = "none";
-                                textField.style.backgroundBlendMode = "none";
-                                textField.style.whiteSpace = "wrap";
-                                textField.style.textAlign = "left";
-                                textField.style.position = "relative";
-                                textField.style.pointerEvents = "none";
-                                textField.style.marginBottom = "50px";
-                                textField.style.borderRadius = "20px";
-                                textField.style.borderWidth = "1px";
-                                textField.style.borderStyle = "dashed";
-                                textField.style.borderColor = "black";
-                                textField.innerHTML = "TEST_CASES:"
-                                this.scrollWindowElement.appendChild(textField);
+            textField.style.width = "98.5%";
+            textField.style.borderRadius = "10px";
+            textField.style.padding = "20px";
+            textField.style.height = "content";
+            textField.style.marginTop = "30px";
+            textField.style.backgroundColor = "white";
+            textField.style.backgroundBlendMode = "none";
+            textField.style.whiteSpace = "wrap";
+            textField.style.textAlign = "left";
+            textField.style.position = "relative";
+            textField.style.pointerEvents = "none";
+            textField.style.marginBottom = "50px";
+            textField.style.borderRadius = "20px";
+            textField.style.borderWidth = "1px";
+            textField.style.borderStyle = "dashed";
+            textField.style.borderColor = "black";
+            textField.innerHTML = "TEST_CASES:"
+            this.scrollWindowElement.appendChild(textField);
 
 
                                 var heading = document.getElementById("headingMessage");
@@ -273,7 +280,7 @@ export class TestSuitePresentationLayer{
                 this.testCaseElements = [];
                 this.testCaseElements.push(testCaseElement);
 
-                this.BuildTestCases(testResultPanel,testCaseElement,testScenario,testCase);
+                this.BuildTestCases(textField, testResultPanel,testCaseElement,testScenario,testCase);
 
                 
 
@@ -283,19 +290,41 @@ export class TestSuitePresentationLayer{
             var heading = document.getElementById("headingMessage");
                     heading.innerHTML = "Loading User Interface...";
             
-            //CREATE seperator.
-            var seperatorString = `------------------------------------------------------------`;
-            var seperator = document.createElement("p");
-            seperator.textContent = seperatorString;
-            seperator.style.fontWeight = "bold";
-            testResultsContainer.appendChild(seperator);
-    
+                    var textField1 = document.createElement('p');
+                    textField1.style.margin = "10px";
+                    textField1.style.height = "content";
+                    textField1.style.fontFamily = "Helvetica";
+                    textField1.style.color = "black";
+                    textField1.style.fontWeight = "bold";
+                    textField1.style.fontSize = "20px"
+                    textField1.style.width = "98.5%";
+                    textField1.style.borderRadius = "10px";
+                    textField1.style.padding = "20px";
+                    //textField1.style.paddingBottom = "630px";
+                    textField1.style.backgroundColor = "white";
+                    textField1.style.backgroundBlendMode = "none";
+                    textField1.style.whiteSpace = "wrap";
+                    textField1.style.textAlign = "left";
+                    textField1.style.position = "relative";
+                    textField1.style.pointerEvents = "none";
+                    textField1.style.marginBottom = "50px";
+                    textField1.style.borderRadius = "20px";
+                    textField1.style.borderWidth = "1px";
+                    textField1.style.borderStyle = "dashed";
+                    textField1.style.borderColor = "black";
+                    textField1.innerHTML = "TEST_OUTPUT:"
+                    this.scrollWindowElement.appendChild(textField1);
+        
+            
+            var textField2 = document.createElement('div');
+            textField2.style.textAlign = "center";
+            textField1.appendChild(textField2);
     
             //CREATE Test title
             var titleResult = document.createElement("p");
             titleResult.textContent = `TEST: [${testScenario.Name.toUpperCase()}]  RESULTS:`;
             titleResult.style.fontWeight = "bold";
-            testResultsContainer.appendChild(titleResult);
+            textField2.appendChild(titleResult);
         
             //PRINT Test Results to text field
             var textField = document.createElement("textarea");
@@ -304,16 +333,18 @@ export class TestSuitePresentationLayer{
             textField.rows = 15;
             textField.innerHTML = testResults;
             textField.disabled = "disabled";
-            testResultsContainer.appendChild(textField);
+            textField.style.verticalAlign = "middle";
+            textField2.appendChild(textField);
     
             //ADD break lines
             var breakLine = document.createElement("br");
             var breakLine2 = document.createElement("br");
             var breakLine3 = document.createElement("br");
             var breakLine4 = document.createElement("br");
+            
     
-            testResultsContainer.appendChild(breakLine);
-            testResultsContainer.appendChild(breakLine4);
+            textField2.appendChild(breakLine);
+            textField2.appendChild(breakLine4);
     
             //SAVE BUTTON 
             var file = new Blob([testResults], {type: "text/javascript"});
@@ -327,30 +358,35 @@ export class TestSuitePresentationLayer{
             saveButton.style.boxShadow = "3px 3px";
             saveButton.style.borderRadius = "0px 0px 10px 10px";
             saveButton.style.backgroundColor = "orange";
-            var func = function (){testScenario.saveToFile(file, fileName)};
-            saveButton.onclick = func.bind(this.Data.TestBeds.TestScenarios[0]);
             saveButton.innerHTML = "Save To File";
             saveButton.style.color = "black";
-            testResultsContainer.appendChild(saveButton);
-            testResultsContainer.appendChild(breakLine2);
-            testResultsContainer.appendChild(breakLine3);
+            var func = function (){testScenario.saveToFile(file, fileName)};
+            saveButton.onclick = func.bind(this.Data.TestBeds.TestScenarios[0]);
+            
+            textField2.appendChild(saveButton);
+            textField2.appendChild(breakLine2);
+            textField2.appendChild(breakLine3);
     
-            var seperator2 = document.createElement("p");
-            seperator2.textContent = seperatorString;
-            seperator2.style.fontWeight = "bold";
-            testResultsContainer.appendChild(seperator2);
     
             //RESET LINK
-            var resetLink = document.createElement("a");
-            resetLink.href = "debug1_corrected.html"
-            resetLink.innerHTML = "Reset Page";
-            testResultsContainer.appendChild(resetLink);
+            var resetButton = document.createElement("button");
+            resetButton.style.padding = "10px";
+            resetButton.style.fontFamily = "Helvetica";
+            resetButton.style.fontWeight = "bold";
+            resetButton.style.textAlign = "center";
+            resetButton.style.border = "none";
+            resetButton.style.boxShadow = "3px 3px";
+            resetButton.style.borderRadius = "0px 0px 10px 10px";
+            resetButton.style.backgroundColor = "orange";
+            resetButton.innerHTML = "Refresh Page";
+            resetButton.style.color = "black";
+            resetButton.href = "debug1_corrected.html"
+            
+            textField2.appendChild(resetButton);
     
             //DISABLE run test button
-
-            //
-            //var runButt = document.getElementById("runTest");
-            //runButt.disabled = true;
+            var runButt = document.getElementById("runTest");
+            runButt.disabled = true;
             
             //RUN POST TEST CALLBACK
             testScenario.RunPostTestCallback();
@@ -364,13 +400,13 @@ export class TestSuitePresentationLayer{
          
 
     }
-    BuildTestCases(testResultsContainer,testCaseElement,testScenario,testCase){
+    BuildTestCases(textFieldPanel,testResultsContainer,testCaseElement,testScenario,testCase){
         
             //testCaseElement.style.overflowY = "scroll";
             //testBedElement.style.pointerEvents = "none";
 
             //Create Test Case Info:
-            var propertyNames = ["TestName","TestType","TestData","TestResult","ExpectedResult","FunctionToTest","ErrorType","Time"];
+            var propertyNames = ["TestName","TestType","TestData","TestResult","ExpectedResult","FunctionToTest","ExpectedErrorType","Time"];
             var testCaseElement = document.createElement('div');
             testCaseElement.style.display = "inline-block";
             testCaseElement.style.position = "relative";
@@ -466,6 +502,7 @@ export class TestSuitePresentationLayer{
             testCaseElement.appendChild(br);
 
             testResultsContainer.appendChild(testCaseElement);
+            textFieldPanel.appendChild(testResultsContainer);
             
     }
 }

@@ -22,7 +22,7 @@ import { passEventHandler } from '../js/debug1_solution.js';
 
 
 //TESTSUITES for TestSuite.
-var testSuiteNames = ["TestSuite1FAIL","TestBed1"];
+var testSuiteNames = ["TestSuitePARTIAL","TestBed1"];
 var testSuite = createTestSuite(testSuiteNames[0],(testSuiteNames[0] + "__" + testSuiteNames[1]));
 
 
@@ -52,7 +52,7 @@ function testScenario1_testsCallback(testScenario){
     
     //DATASET first test
     let testDataOne = [10,12,16,14,18];
-    let testDataOneExpectedResult = [71,15];
+    let testDataOneExpectedResult = [70,14];
     
     //DATASET second test
     let testDataTwo = [17,17,19,20,17];
