@@ -1,7 +1,7 @@
 //NEEDED TO RUN TESTING algorith will work without this import.
-//import { enableTestEnvironment as TestPass } from '../TestSuite/TestKit_Pass.js';
-//import { enableTestEnvironment as TestFail } from '../TestSuite/TestKit_Fail.js';
-import { enableTestEnvironment as TestPartialFail } from '../TestSuite/TestKit_Partial.js';
+import { RunTestSuiteTools } from '../TestSuite/StartFile.js';
+
+
 
 
 //Attach Event Listener to link via inline function.
@@ -144,16 +144,8 @@ export function getMarks(userInput = false, singleEntry = false){
 }
 
 
-//NOT NEEDED - for demostration purposes only, handler is changed in testBed1_PostTest_Callback in TestKit.js
-export function passEventHandler(){
-    return getmarksEventHandler;
-}
-
 //NEED THIS FOR TESTING TO WORK - pass "false" as argument to disable test environment.
-
-//TestPass(true);
-//TestFail(true);
-TestPartialFail(true);
+RunTestSuiteTools(true);
 
 
 

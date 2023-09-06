@@ -1,12 +1,172 @@
+import { TestSuiteProperties } from "./TestSuiteProperties.js";
+import { TestSuite } from "./TestSuite.js";
+import { TestSuiteToolsEventHandler } from "./TestSuiteToolsEventHandler.js"
+import { TestSuitePropertiesEventHandlers } from "./TestSuitePropertiesEventHandlers.js";
 import {DraggableElement} from "./DraggableElement.js";
 
 export class TestSuitePresentationLayer{
-    constructor(testSuite){
-        this.Data = testSuite;
-        this.mainWindowId = this.Data.divIdName;
+    constructor(defaults){
+        this.Defaults = defaults
+        this.Data = null;
+        this.mainWindowId = null;
         this.mainWindowElement = null;
         this.scrollWindowElement;
+        this.clickCount = 0;
+        this.TestKitPath = null;
+        
     }
+
+    AddTestSuite(testSuiteName, testBedName){
+        var testSuite = new TestSuite(testSuiteName,testBedName)
+        this.Data = testSuite;
+        this.mainWindowId = this.Data.divIdName;
+        window.testKitPath = this.TestKitPath.value;
+        this.EnableRunButton();
+    }
+
+    EnableRunButton(){
+        if (this.Data != null){
+            var button = document.getElementById("runTest");
+            button.onclick = function() {console.log("RUN_BUTTON_PRESSED"); this.Data.TestBeds.TestScenarios[0].RunTestsFunc(); this.BuildTestBeds(); if (window.sessionStorage.getItem("testBedsRun") == true) {console.log("ALL_TEST_CASES_RAN")}else{console.log("NO_TEST_CASES_TO_RUN")}}.bind(this);
+        }
+    }
+
+    #assignEventsToProperties(testSuiteProperties,eventHandlers,parentNameForAllCustomEvents,i,max){
+        var eventhandlers = eventHandlers;
+
+        for (var property in testSuiteProperties) {
+            
+            var eventName = `${parentNameForAllCustomEvents}_${property}`; //Create event name
+
+            //Create Session Data Variable for eventName.
+            if (window.sessionStorage.getItem(eventName) == null){
+                window.sessionStorage.setItem(eventName, "false");
+            }
+
+            if (i < max){
+                if (Object.prototype.hasOwnProperty.call(testSuiteProperties, property)) { //check property to see if it is unique to class
+                    i = i + 1;
+                    Object.defineProperty(testSuiteProperties, property, { //define property setter to create event when property is set
+                        set: function(value) {
+                            //SET new value to property
+                            property = value;
+                        
+                            var testSuiteEvent = new CustomEvent(eventName, { detail: { value: value} });
+                                
+                            //DISPATCH event
+                            document.dispatchEvent(testSuiteEvent);
+                        },
+                        get: function() {
+                            // Return the current value
+                            return property;
+                        },
+                        enumerable: true
+                    });
+                    
+                    var eventHandlersFound = [];
+                    var eventHandlerFound = null;
+                    //CHECK EventHandlers for handlers that match property
+                    var check = eventHandlers[0];
+                    for (let eventH of eventHandlers){
+                        
+                        if(eventH.PropertyName == property){
+                            eventHandlersFound.push(eventH);
+                            if (eventHandlerFound == null){
+                                eventHandlerFound = eventH;
+                            }
+                        }
+                    }
+
+                    if (eventHandlersFound.length > 1){
+                        return Error(`MULTIPLE_EVENT_HANDLERS_FOUND_FOR_PROPERTY: ${eventHandlerFound.foreach(handler => {return `${handler.name} `})} `)
+                    }else if(eventHandlersFound.length == 1){
+                        document.addEventListener(eventName, eventHandlerFound.EventHandler.bind(this)); //creat an event listener on DOM and add event handler to that event
+                        console.log(`EVENT_LISTENER_FOR_EVENT: [${eventName}] CREATED`);
+                    }else{
+                        return Error("NO_EVENT_HANDLER_FOUND_WITH_MATCHING_PROPERTY_NAME");
+                    }
+                }
+                    
+            }
+        }
+    }
+    #assignEventsToPropertiesOnObject(testSuiteProperties, parentNameForAllCustomEvents){
+
+    var eventHandlers = testSuiteProperties.tspEventHandlers;
+    var eventHCheck = eventHandlers[0];
+    var i = 0;
+    var max = Object.keys(testSuiteProperties.baseObject).length;
+    var inputType = testSuiteProperties.baseObject.constructor.name;
+
+    //THIS STAGE CHECKS FOR EXPECTED "TestSuiteProperties" Type, if it is not that type algorthm will run general purpose use case which basically checks that all eventHandlers given to it are actually event handlers 
+    if (inputType == "TestSuiteProperties" ){
+        this.#assignEventsToProperties(testSuiteProperties.baseObject,eventHandlers,parentNameForAllCustomEvents,i,max);
+    }else{
+        if (eventHandlers.length == max){
+            let ieventCounter = 0;
+            let eventsThatAreNotAnEvent = [];
+            eventHandlers.foreach((eventHandler) => { if (typeof(eventHandler) == "function"){ieventCounter = ievent++;}else{eventsThatAreNotAnEvent.push(ievent);ieventCounter = ievent++;}});//check 
+            
+            if (eventsThatAreNotAnEvent.length == 0){
+
+                this.#assignEventsToProperties(testSuiteProperties.baseObject,eventHandlers,parentNameForAllCustomEvents,i,max);
+                
+            }else{
+                
+                return Error(`EVENT_HANDLERS_THAT_ARE_NOT_AN_EVENT: [${eventsThatAreNotAnEvent.toString()}]`);
+            }
+            
+        }else{
+            let result;
+            let moreLess;
+            if (max > eventHandlers.Length){
+                result = Math.abs(max - eventHandler.length);
+                moreLess = "more";
+            }else if (max < eventHandlers.length){
+                result = Math.abs(eventHandler.length - max);
+                moreLess = "less";
+            }
+            return Error(`Event_Handlers_Range_Error: ${result} ${moreLess} event handlers needed. Please enter only ${max} events into eventHandler argument, you provided ${eventHandlers.length}`);
+        } 
+    }
+
+    }
+
+    createConsoleTestSuiteTools(){
+    if (!window.testSuiteTools){
+        
+        //Create window variable
+        window.testSuiteTools = new TestSuiteProperties();
+
+        var tspEventHandlers = new TestSuitePropertiesEventHandlers(window.testSuiteTools);
+
+
+        var testSuiteToolsEventHandler = function(e) {
+                    
+            window.sessionStorage.setItem(e.type,JSON.stringify(e.detail.value));
+            if (e.detail.value == true){
+                console.log(`${e.type} : Enabled`);
+            }else{
+                console.log(`${e.type} : Disabled`);        
+            }
+                
+            
+            this.EnableTestSuiteTools(JSON.parse(window.sessionStorage.getItem(e.type)));
+            
+        };
+
+
+        tspEventHandlers.AddNewTstEventHandler(testSuiteToolsEventHandler,this.Defaults.defaultPropertyName);
+
+        this.#assignEventsToPropertiesOnObject(tspEventHandlers,this.Defaults.defaultTestSuiteToolsName);
+
+        
+        
+        
+        }
+    }
+
+  
 
     EnableTestSuiteTools(testMode = true){
         
@@ -23,10 +183,11 @@ export class TestSuitePresentationLayer{
             button.style.borderRadius = "0px 0px 10px 10px";
             button.style.backgroundColor = "orange";
             button.id = "runTest"
-            button.onclick = function() {console.log("RUN_BUTTON_PRESSED"); this.Data.TestBeds.TestScenarios[0].RunTestsFunc(); this.BuildTestBeds(); if (window.sessionStorage.getItem("testBedsRun") == true) {console.log("ALL_TEST_CASES_RAN")}else{console.log("NO_TEST_CASES_TO_RUN")}}.bind(this);
-
+            
             button.textContent = `RUN TESTSUITE`;
             this.scrollWindowElement.appendChild(button);
+
+            
             
             var welcome = document.createElement('p');
             welcome.style.fontFamily = "Helvetica";
@@ -41,13 +202,55 @@ export class TestSuitePresentationLayer{
             welcome.style.fontSize = "50px"
             welcome.style.width = "100%";
             welcome.style.borderRadius = "50px";
-            welcome.style.padding = "20px";
+            //welcome.style.padding = "20px";
             welcome.style.marginBottom = "10px";
            
                                 
             welcome.innerHTML = "<sup><b>WELCOME\n\nto TestSuite Webpage Unit-Testing Software. _version_0.01beta</sup>";
 
+
+            var pickerDiv = document.createElement("div");
+            pickerDiv.style.margin = "10px";
+            pickerDiv.style.fontFamily = "Helvetica";
+            pickerDiv.style.color = "black";
+            pickerDiv.style.fontWeight = "bold";
+            pickerDiv.style.fontSize = "20px"
+            pickerDiv.style.width = "40%";
+            pickerDiv.style.borderRadius = "10px";
+            pickerDiv.style.padding = "20px";
+            pickerDiv.style.pointerEvents = "auto";
+            pickerDiv.style.marginLeft = `${(window.innerWidth / 2) - (window.innerWidth * 0.2) - 40}px`;
+
+            pickerDiv.style.height = "content";
+            pickerDiv.style.marginTop = "10px";
+            pickerDiv.style.backgroundColor = "white";
+            pickerDiv.style.backgroundBlendMode = "none";
+            pickerDiv.style.whiteSpace = "wrap";
+            pickerDiv.style.textAlign = "center";
+            pickerDiv.style.position = "relative";
+            pickerDiv.style.pointerEvents = "none";
+            pickerDiv.style.marginBottom = "50px";
+            pickerDiv.style.borderRadius = "20px";
+            pickerDiv.style.borderWidth = "1px";
+            pickerDiv.style.borderStyle = "dashed";
+            pickerDiv.style.borderColor = "black";
+            pickerDiv.innerHTML = "CHOOSE TEST_KIT: ";
+
+            var pickTestKit = document.createElement("input");
+            pickTestKit.type = "file";
+            pickTestKit.marginLeft = "50px";
+            pickTestKit.style.pointerEvents = "auto";
+            pickTestKit.id= "testKitPicker";
+            pickTestKit.innerHTML = "Choose TestKit:"
+            pickTestKit.style.position = "relative";
+            pickTestKit.addEventListener('change', function (filename){this.TestKitPath == filename; this.AddTestSuite("TestSuite","TestBed1");} )
+
+            pickerDiv.appendChild(pickTestKit);
+            this.scrollWindowElement.append(pickerDiv);
             this.scrollWindowElement.append(welcome);
+
+            
+            button.disabled = true;
             
         }else{
             
@@ -63,6 +266,8 @@ export class TestSuitePresentationLayer{
 
         var openCloseMainWindow = function (){
             DraggableElement.dragElement(this.mainWindowOpenCloseButtonElement,this.scrollWindowElement);
+            
+            //run this code on double click
             /* var getHeight = document.getElementById("scrollWindow").style.height;
             if(getHeight == "300px"){
                 this.scrollWindowElement.style.height = "40px";
