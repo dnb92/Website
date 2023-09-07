@@ -11,6 +11,8 @@ export class PresentationLayerElementUnit{
         this.ElementClass = elementClass;
         this.Element = null;
         this.Style = null;
+        this.EventType = null;
+        this.EventHandler = null;
         this.createElement();
     }
 
@@ -21,7 +23,7 @@ export class PresentationLayerElementUnit{
         this.Element = newElement;
     }
 
-    addAttributeChange(elementAttributeName, value){
+    addAttributeChange(elementAttributeName, value, renderChange = false){
         for (var property in this.Element){
             if(Object.prototype.hasOwnProperty.call(this.Element, property)){
                 if (property == elementAttributeName){
@@ -30,7 +32,15 @@ export class PresentationLayerElementUnit{
                         var style = new PresentationLayerElementStyle(this.Name,this.ElementType);
                         style.addAttributeStyle(attributeChange);
                         this.Style = style;
-                    }else{
+                    }else {
+                        for (var attribute in this.Style.AttributeStyles){
+                            if (attribute.Name == elementAttributeName){
+                                attribute.Value = value;
+                                if (renderChange == true){
+                                    attribute.applyAttributeChange();
+                                }
+                            }
+                        }
                         this.Style.addAttrributeStyle(attributeChange);
                     }
                     
@@ -38,6 +48,21 @@ export class PresentationLayerElementUnit{
             }
         }
     }
+
+
+    changeEventListener(overwrite = false, eventHandler, eventType){
+        if (overwrite == false){
+            this.EventType = eventType;
+            this.EventHandler = eventHandler;
+            this.Element.addEventEventListener(this.EventType,this.EventHandler);
+        }else{
+            this.Element.removeEventListener(this.EventType,this.EventHandler);
+            this.EventType = eventType;
+            this.EventHandler = eventHandler;
+            this.Element.addEventEventListener(this.EventType,this.EventHandler);
+        }
+    }
+
 
     renderElement(changeParent = null){
         if (changeParent == null){
@@ -58,4 +83,7 @@ export class PresentationLayerElementUnit{
     //been set as this elementUnits parent. It is currently designed to hold a document.getelementbyid object, but i think that in the future all parents
     // and elements should be an ElementUnit and we are just passing element units around. Maybe we could have an elementUnit mover object that will move the elements.
     //need to look at whether a functional or more oop approach is best.
+    //create a mode that only allows one type of element so we can create stricter rules. Maybe we could make a ElementUnitFactory
+    //that congifgures element units to spec so they can be used on a pagetemplate or other kinds.
+    //A static class for each template made that returns all templates to to level presenationLayer to be accessable for all application.
 }
