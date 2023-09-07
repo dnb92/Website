@@ -16,7 +16,7 @@ export class PresentationLayerElementStyle{
     }
 
     applyStyle(){
-        for (var attributeStyle in AttributeStyles){
+        for (var attributeStyle of this.AttributeStyles){
             attributeStyle.applyAttributeChange();
         }
     }

@@ -1,16 +1,26 @@
 export class PresentationLayerElementAttribute{
-    constructor(element,attribute, value){
-        this.Element = element;
-        this.Property = attribute;
-        this.Value = value;
+    set Value(value) {
+        this.ValueHistory.push(value);
+        this._Value = value;  
     }
 
-    applyAttributeChange(eventListener = false){
-        for (var property in this.Element){
-            if (Object.prototype.hasOwnProperty.call(this.Element, this.Property)){
-                    property = this.Value;
-            }
-        }
+    get Value(){
+        return this._Value;
+    }
+    
+    constructor(parent,element,attribute, value){
+        this.Parent = parent;
+        this.Element = element;
+        this.Property = attribute;
+        this.ValueHistory = [];
+        this._Value = null;
+        this.Value = value;
+        //this.Value(value);
+    }
+
+    applyAttributeChange(){
+        this.Element[this.Property] = this.Value;
+        console.log(this.Element[this.Property]);
         
     }
 }

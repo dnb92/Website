@@ -4,7 +4,7 @@ import { PresentationLayerElementStyle } from './PresentationLayerElementStyle.j
 //This makes indiviual elements and stores their style changes
 export class PresentationLayerElementUnit{
     constructor(parentToRenderTo,nameOfPresentationUnit,elementType,elementID,elementClass = null){
-        this.ParentToRenderTo = parentToRenderTo;
+        this.Parent = parentToRenderTo;
         this.Name = nameOfPresentationUnit
         this.ElementType = elementType; //add validation here to check that valid element is given.
         this.ElementID = elementID;
@@ -13,6 +13,7 @@ export class PresentationLayerElementUnit{
         this.Style = null;
         this.EventType = null;
         this.EventHandler = null;
+        this.AddedToParent = false;
         this.createElement();
     }
 
@@ -24,27 +25,40 @@ export class PresentationLayerElementUnit{
     }
 
     addAttributeChange(elementAttributeName, value, renderChange = false){
-        for (var property in this.Element){
-            if(Object.prototype.hasOwnProperty.call(this.Element, property)){
-                if (property == elementAttributeName){
-                    var attributeChange = new PresentationLayerElementAttribute(this.Element,property,value);
+                if (this.Element[elementAttributeName] != null){
+                    var attributeChange = new PresentationLayerElementAttribute(this.Parent,this.Element,elementAttributeName,value);
                     if (this.Style == null){
                         var style = new PresentationLayerElementStyle(this.Name,this.ElementType);
                         style.addAttributeStyle(attributeChange);
                         this.Style = style;
+                        if (renderChange == true){
+                            attributeChange.applyAttributeChange();
+                            return;
+                        }
                     }else {
-                        for (var attribute in this.Style.AttributeStyles){
-                            if (attribute.Name == elementAttributeName){
+                        for (var attribute of this.Style.AttributeStyles){
+                            if (attribute.Property == elementAttributeName){
                                 attribute.Value = value;
+                                return;
                                 if (renderChange == true){
                                     attribute.applyAttributeChange();
+                                    return;
                                 }
                             }
                         }
-                        this.Style.addAttrributeStyle(attributeChange);
+                        this.Style.addAttributeStyle(attributeChange);
                     }
                     
+                }else{
+                    throw new Error("Attribute does not exist on Element!");
                 }
+    }
+
+    historyBack(){
+        for (var attribute of this.Style.AttributeStyles){
+            if (attribute.ValueHistory != null){
+                attribute.Value = attribute.ValueHistory[(attribute.ValueHistory.length -2)];
+                attribute.applyAttributeChange();
             }
         }
     }
@@ -63,15 +77,24 @@ export class PresentationLayerElementUnit{
         }
     }
 
+    updateStyle(){
+        this.Style.applyStyle();
+    }
 
     renderElement(changeParent = null){
+        
         if (changeParent == null){
             this.Style.applyStyle();
-            this.ParentToRenderTo.appendChild(this.Element);
+            if (this.AddedToParent == false){
+                this.Parent.appendChild(this.Element);
+                this.AddedToParent = true;
+            }
+            
         }else{
-            this.ParentToRenderTo = changeParent;
+            this.Parent = changeParent;
             this.Style.applyStyle();
-            this.ParentToRenderTo.appendChild(this.Element);
+                this.Parent.appendChild(this.Element);
+                this.AddedToParent = true;
         }
         
     }
