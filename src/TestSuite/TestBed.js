@@ -16,17 +16,30 @@ var TestScenarioMode = getTestScenarioMode();
 
 //testBed
 export class TestBed{
-    constructor(testBedName){
+    constructor(presentationLayer,testBedName){
+        this.PresentationLayer = presentationLayer;
         this.Name = testBedName;
         this.TestScenarios = [];
         this.divIdName = this.Name + "_div";
+    }
+
+    RunAllTestScenarios(){
+        for (var testScenario of this.TestScenarios){
+            testScenario.RunAllTestCases();
+        }
+    }
+
+    BuildAllTestScenarios(){
+        for (var testScenario of this.TestScenarios){
+            this.PresentationLayer.BuildTestBeds(testScenario);
+        }
     }
     
     AddTestScenario(name, testKit, testBedMode, testBedType, functionToTest, functionLock, testsCallbackFunction, postTestsCallbackFunction){
             if (this.TestScenarios.indexOf(testBed => testBed.Name == name) != -1){
                 throw new Error(`[${name}] Already Exists for an existing TestScenario, please enter unique name`);
             }else{
-                var testBed = new TestScenario(name, testKit, testBedMode, testBedType, functionToTest, functionLock, testsCallbackFunction,postTestsCallbackFunction);
+                var testBed = new TestScenario(this.PresentationLayer, name, testKit, testBedMode, testBedType, functionToTest, functionLock, testsCallbackFunction,postTestsCallbackFunction);
                 this.TestScenarios.push(testBed);
                 console.log(`TestScenario: [${name}] Added Successfully.`)
             }

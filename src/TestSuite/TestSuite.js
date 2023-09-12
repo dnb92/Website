@@ -2,10 +2,11 @@ import { TestSuitePresentationLayer } from "./TestSuitePresentationLayer.js";
 import { TestBed } from "./TestBed.js";
 
 export class TestSuite{
-    constructor(testSuiteInstanceName, testBedName, presentationLayer){
+    constructor(presentationLayer, testSuiteInstanceName, testBedName){
+        this.PresentationLayer = presentationLayer;
         this.InstanceName = testSuiteInstanceName;
         this.PresentationLayer = presentationLayer;
-        this.TestBeds = new TestBed(testBedName); //ONLY ONE ALLOWED ATM
+        this.TestBeds = new TestBed(this.PresentationLayer,testBedName); //ONLY ONE ALLOWED ATM
         this.defaultTestSuiteToolsName = "testSuiteTools";
         this.defaultPropertyName = "enabled"
         this.defaultSessionStorageItemName = this.defaultTestSuiteToolsName + "_" + this.defaultPropertyName;
@@ -18,7 +19,7 @@ export class TestSuite{
         if (this.TestScenarios.indexOf(testBed => testBed.Name == name) != -1){
             throw new Error(`[${name}] Already Exists for an existing TestBed, please enter unique name`);
         }else{
-            var testBed = new TestBed(name);
+            var testBed = new TestBed(this.PresentationLayer, name);
             this.TestBeds.push(testBed);
             console.log(`TestBed: [${name}] Added Successfully.`)
         }

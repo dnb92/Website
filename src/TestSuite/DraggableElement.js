@@ -1,5 +1,21 @@
 export class DraggableElement{
     static dragElement(dragger,draggee,ancestor) {
+      var minHeight = Math.round(window.innerHeight / 3);
+      var midHeight = Math.round(window.innerHeight / 2);
+      var midmaxHeight = Math.round(window.innerHeight * 0.75);
+      var maxHeight = Math.round(window.innerHeight * 0.9);
+      //var psuedoWindow = document.createElement('div');
+      //psuedoWindow.style.width = window.innerWidth + "px";
+      //psuedoWindow.style.height = minHeight + "px";
+      //psuedoWindow.style.position = "absolute";
+      //psuedoWindow.style.bottom = "0px";
+      //psuedoWindow.style.height = minHeight + "px";
+      //psuedoWindow.style.backgroundColor = "lightgrey";
+      //ancestor.style.zIndex = 2;
+      //psuedoWindow.style.zIndex = -1;
+
+      //document.body.append(psuedoWindow);
+
 
         
         var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0, x=0,y=0;
@@ -38,11 +54,14 @@ export class DraggableElement{
             
                 dragger.style.top = y + "px";
                 draggee.style.top = (y + 40) +"px";
+                draggee.style.height = "auto";
+                
+                
                 //draggee.style.bottom = "0px";
                 
                 
                 //draggee.style.height = (window.innerHeight - y) + "px";
-                draggee.style.height = "auto";
+                
                 //draggee.style.height = (window.innerHeight - y) + "px";
                 //draggee.style.height = "content";
                 
@@ -55,7 +74,7 @@ export class DraggableElement{
       
         function closeDragElement() {
           
-            
+            //psuedoWindow.remove();
             //draggee.style.top = 380 +"px";
             //draggee.style.height = 50 + "px";
           
@@ -64,25 +83,29 @@ export class DraggableElement{
           document.onmousemove = null;
           var currentPosition = Math.abs(y);
           
-          var minHeight = 300;
-          var midHeight = Math.round(window.innerHeight / 2);
-          var maxHeight = Math.round(window.innerHeight * 0.85);
+          
           console.log(Math.abs(y));
           console.log(minHeight);
          
           if( currentPosition < minHeight){
-            dragger.style.top = -40 + "px";
+            dragger.style.top = -50 + "px";
             draggee.style.top = -20 + "px";
-          } else if (currentPosition > midHeight && currentPosition < maxHeight){
-            dragger.style.top = -midHeight + "px";
-            draggee.style.top = -midHeight + 40 + "px";
-          } else if (currentPosition > maxHeight || currentPosition < maxHeight && currentPosition > (maxHeight * 0.8)){
+          } else if (currentPosition > midmaxHeight * 1.1 || currentPosition > maxHeight){
             dragger.style.top = -maxHeight + "px";
-            draggee.style.top = -maxHeight + 40 + "px";
+            draggee.style.top = -maxHeight + 50 + "px";
           } else if (currentPosition > minHeight && currentPosition < midHeight ){
             dragger.style.top = -minHeight + "px";
-            draggee.style.top = -minHeight+40 + "px";
+            draggee.style.top = -minHeight + 50 + "px";
           }
+          else if (currentPosition > midHeight && currentPosition > (midmaxHeight * 0.9)){
+            dragger.style.top = -midmaxHeight + "px";
+            draggee.style.top = -midmaxHeight + 50 + "px";
+
+          } else if (currentPosition > midHeight && currentPosition < midmaxHeight){
+            dragger.style.top = -midHeight + "px";
+            draggee.style.top = -midHeight + 50 + "px";
+          } 
+          
           
           
          

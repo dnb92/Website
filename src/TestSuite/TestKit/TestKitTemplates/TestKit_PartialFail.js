@@ -5,8 +5,8 @@
 
 //[REQUIRED] FUNCTION_TO_BE_TESTED_FROM_WEBSITE - this is defined as a window variable with
 //in 'TestKit_Functions.js' file in the 'TestKit' folder.
-export function functionToTest(value){
-  var func = window.getMarks(value);
+export function functionToTest(){
+  var func = window.getMarks;
   return func;
 }
 

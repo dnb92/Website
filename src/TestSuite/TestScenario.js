@@ -13,12 +13,13 @@ var TestScenarioMode = getTestScenarioMode();
 //TestCase are executed in the order that they are in the array.
 //TestCase can only be created by a TestBed - hence why they are not exported.
 export class TestScenario {
-    constructor(name, testKit, testScenarioMode, testScenarioType, functionToTest, functionLock = false, testsCallbackFunction,postTestsCallbackFunction = null){
+    constructor(presentationLayer, name, testKit, testScenarioMode, testScenarioType, functionToTest, functionLock = false, testsCallbackFunction,postTestsCallbackFunction = null){
         
-        this.FunctionToTest = functionToTest
+        this.PresentationLayer = presentationLayer;
+        this.FunctionToTest = functionToTest;
         this.PostTestCallback = function (){postTestsCallbackFunction(this)};
         this.FunctionLock = functionLock;
-        this.RunTestsFunc = function (){testsCallbackFunction(this);} //maybe put posttestcallback here};
+        this.StageScenario = function (){testsCallbackFunction(this)} //maybe put posttestcallback here};
         this.Name = `[${name}]`;
         this.TestCases = [];
         this.Passed = false;
@@ -28,6 +29,7 @@ export class TestScenario {
         this.TimeTestStarted = TestScenario.getTimeAndDate()[1];
         this.TestKit = testKit;
         this.divIdName = this.Name + "_div";
+        this.isBuilt = false;
 
         
         if (Object.keys(TestScenarioMode).find(element => element == testScenarioMode)){
@@ -58,35 +60,24 @@ export class TestScenario {
 
     }
 
-    EnableTestScenario(testMode = true){
+    Build(){
         
-        //Control visibility of "Run Test" button through testMode variable, default is false - MUST CHAGE TO TRUE TO GET TEST BUTTON.
-        if (testMode == true){
-            
-            var newContainer = document.createElement("figure");
-            newContainer.id = "testModeDiv";
-            document.body.appendChild(newContainer);
-            var testModeContainer = document.getElementById("testModeDiv");
-            testModeContainer.style.border = "thick solid lightgrey";
-            testModeContainer.style.borderWidth = "10px";
-            testModeContainer.style.padding = "20px";
-            testModeContainer.style.textAlign = "center";
-            
-            var button = document.createElement("button");
-            button.id = "runTest"
-            button.onclick = this.RunTestsFunc.bind(this);
-            button.textContent = `Run TestScenario: [${this.Name}]`;
-            testModeContainer.appendChild(button);
-        }else{
-            var testModeContainer = document.getElementById("testModeDiv");
-            if (testModeContainer != null){
-                testModeContainer.remove();
-            }
-        }
+            this.StageScenario();
+            this.isBuilt = true;
+       
     }
 
-    RunTestCases(){
-        this.TestCases.forEach(function(test) {test.Run();});
+    RunAllTestCases(){
+        if (this.isBuilt == false){
+            this.Build();
+            this.TestCases.forEach(function(testCase) {testCase.Run()});
+            this.PresentationLayer.BuildTestBeds(this);
+        }else{
+            this.TestCases.forEach(function(testCase) {testCase.Run()});
+            this.PresentationLayer.BuildTestBeds(this);
+        }
+        
+
     }
 
     AllTestCasesPassed() {
@@ -125,13 +116,13 @@ export class TestScenario {
     #AddTestCase(testName, testType, testData, functionToTest = null, expectedResult, expectedError = TypeError) {
         
         //should be 'testcase' not testscenario - please change later.
-        var testScenario = new TestCase(testName, testType, testData, functionToTest, expectedResult, expectedError);
+        var testCase = new TestCase(this.PresentationLayer, testName, testType, testData, functionToTest, expectedResult, expectedError);
         //check function exists if not use testbed function
-        if (testScenario.FunctionToTest == null){
-            testScenario.FunctionToTest = this.FunctionToTest;
+        if (testCase.FunctionToTest == null){
+            testCase.FunctionToTest = this.FunctionToTest;
         }
         if (this.FunctionLock == true){
-            if (testScenario.FunctionToTest != this.FunctionToTest){
+            if (testCase.FunctionToTest != this.FunctionToTest){
                 var typeName = this.#getNameOfFunction(this.FunctionToTest);
                 
                 let error = new Error(`TestScenario: ${testScenario.TestName} is not using same function as TestScenario: ${this.Name}. Expected: ${typeName}`);
@@ -140,17 +131,17 @@ export class TestScenario {
             }
         }
         if (this.TestScenarioMode == TestScenarioMode.SingleType){
-            if (testScenario.TestType == this.TestScenarioType){
+            if (testCase.TestType == this.TestScenarioType){
                 
-                this.TestCases.push(testScenario);
-                console.log(`${this.Name} TEST_SCENARIO_ADDED: ${testScenario.TestName} `)
+                this.TestCases.push(testCase);
+                console.log(`${this.Name} TEST_SCENARIO_ADDED: ${testCase.TestName} `)
                 
             }else{
                 throw new TypeError("TestScenario is different TestType to this TestScenario TestType");
             }
         }else if (this.TestScenarioMode == TestScenarioMode.AllTypes){
-            this.TestCases.push(testScenario);
-            console.log(`${this.Name} TEST_SCENARIO_ADDED: ${testScenario.TestName} `)
+            this.TestCases.push(testCase);
+            console.log(`${this.Name} TEST_SCENARIO_ADDED: ${testCase.TestName} `)
             
         }else{
             throw new Error("Unexpected error when adding new TestScenario");
@@ -184,16 +175,18 @@ export class TestScenario {
         
         for (let i = 0; i <= max1; i++){
             var element = links[i];
-                var clone = element.cloneNode(true);
-                clone.addEventListener('click', eventHandler);
-                element.replaceWith(clone); 
-                console.log(`TESTMODE | PAGE_LINKS_REPLACED: NodeType: [${element.nodeName}] NodeText: [${element.innerHTML}]`);
+                if (element.id != "runTest" && element.id != "clearAll" ){
+                    var clone = element.cloneNode(true);
+                    clone.addEventListener('click', eventHandler);
+                    element.replaceWith(clone);
+                    console.log(`TESTMODE | PAGE_LINKS_REPLACED: NodeType: [${element.nodeName}] NodeText: [${element.innerHTML}]`);
+         
+                }
         }
     
     }
 
     GenerateTestResults(){
-        this.RunTestCases();
         this.AllTestCasesPassed();
         this.DateTestCompleted = TestScenario.getTimeAndDate()[0];
         this.TimeTestCompleted = TestScenario.getTimeAndDate()[1];

@@ -28,7 +28,7 @@ export function testCallback(testScenario){
   
     
     //ADD testScenarios to testBed in order you would like them to be tested.
-    //testScenario.AddTestCase_InputOutput("Test One: Integer Data",testDataOne,getMarks,testDataOneExpectedResult);
+    testScenario.AddTestCase_InputOutpt("Test One: Integer Data",testDataOne,getMarks,testDataOneExpectedResult);
     //testScenario.AddTestCase_InputOutput("Test One: HTML Text",testDataOne,testFunction_CheckHTMLValues,testDataOneExpectedResult);
     //testScenario.AddTestCase_InputOutput("Test Two: Integer Data",testDataTwo,getMarks,testDataTwoExpectedResult);
     //testScenario.AddTestCase_InputOutput("Test Two: HTML Text",testDataTwo,testFunction_CheckHTMLValues,testDataTwoExpectedResult);

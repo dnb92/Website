@@ -1,13 +1,14 @@
 //NEEDED TO RUN TESTING algorith will work without this import.
+import { RunTestSuiteTools } from '../TestSuite/StartFile.js';
+//import _ from 'lodash';
 
 
 
 
 //Attach Event Listener to link via inline function.
-
-//var getmarksEventHandler = function(){getMarks(false,true)};
-//var marks = document.getElementById("EnterMarks");
-//document.body.onload = marks.addEventListener('click', getmarksEventHandler);
+var getmarksEventHandler = function(){getMarks(false,true)};
+var marks = document.getElementById("EnterMarks");
+marks.addEventListener('click', getmarksEventHandler);
 
 
 function checkForClass(className, singleEntry){
@@ -113,7 +114,7 @@ function printMarks(marksList, userInput){
 }
 
 //MAIN ALGORITHM - singleEntry if true makes sure only one set of marks can be entered, if false: multiple.
-function getMarks(userInput = false, singleEntry = false){
+export function getMarks(userInput = false, singleEntry = false){
 	var marksList = new Array(5);
 	var total = 0,average=0,count=1;
     
@@ -144,6 +145,8 @@ function getMarks(userInput = false, singleEntry = false){
 }
 
 
+//NEED THIS FOR TESTING TO WORK - pass "false" as argument to disable test environment.
+RunTestSuiteTools(true);
 
 
 

@@ -7,7 +7,8 @@ var TestType = getTestType();
 
 //TEST_SCENARIO -- This is your Unit Test Object that can be used to test input and output of various types.
 export class TestCase{
-    constructor(testName, testType, testData, functionToTest = null, expectedResult, expectedError = TypeError){
+    constructor(presentationLayer, testName, testType, testData, functionToTest = null, expectedResult, expectedError = TypeError){
+        this.presentationLayer = presentationLayer;
         this.TestName = `[${testName}]`;
         this.TestData = testData;
         this.TestResult = null;
